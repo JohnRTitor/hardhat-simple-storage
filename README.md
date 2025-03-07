@@ -20,6 +20,7 @@ hardhat run scripts/deploy.ts --network hardhat
 ```
 
 ## Notes
+### Node
 The following commmand can be used to spawn a `localhost` blockchain server:
 
 ```shell
@@ -32,3 +33,13 @@ which is why in a `hardhat node` monitoring shell, those transactions won't show
 
 `hardhat` network is not persistent. It actually resets every time we run a script
 on it. So the starting block number is always 1.
+
+### Hardhat console
+This command is very much a repl for hardhat. It can evaluate a statement, get the response back, etc.
+
+```
+hardhat console --network hardhat
+```
+
+However it does not support TypeScript syntax, for now. So be sure to remove your type
+annotation and use pure JavaScript instead. :(

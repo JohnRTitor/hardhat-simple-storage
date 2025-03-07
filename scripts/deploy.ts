@@ -1,5 +1,7 @@
 // imports
 import { ethers, run, network } from "hardhat";
+// if you get a typescript warning that typechain-types is not found
+// recompile the code, you likely cleaned your workspace
 import { SimpleStorage__factory } from "../typechain-types";
 import "@nomicfoundation/hardhat-verify";
 import { ContractTransactionResponse } from "ethers";
