@@ -2,7 +2,7 @@
 import { ethers, run, network } from "hardhat";
 // if you get a typescript warning that typechain-types is not found
 // recompile the code, you likely cleaned your workspace
-import { SimpleStorage__factory } from "../typechain-types";
+import { SimpleStorage, SimpleStorage__factory } from "../typechain-types";
 import "@nomicfoundation/hardhat-verify";
 import { ContractTransactionResponse } from "ethers";
 
@@ -12,7 +12,7 @@ async function main(): Promise<void> {
     await ethers.getContractFactory("SimpleStorage");
 
   console.log("Deploying contract...");
-  const simpleStorage = await SimpleStorageFactory.deploy();
+  const simpleStorage: SimpleStorage = await SimpleStorageFactory.deploy();
   await simpleStorage.waitForDeployment();
 
   console.log(`Deployed contract to ${await simpleStorage.getAddress()}`);
