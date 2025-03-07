@@ -22,6 +22,18 @@ async function main(): Promise<void> {
     await simpleStorage.deploymentTransaction()?.wait(5);
     await verifyContract(await simpleStorage.getAddress(), []);
   }
+
+  // Get the current value
+  let currentValue: bigint = await simpleStorage.getFunction("retrieve")();
+  console.log(`Current value is ${currentValue}`);
+
+  // Get a new value
+  let tx: ContractTransactionResponse = await simpleStorage.getFunction(
+    "store"
+  )("42");
+  await tx.wait(); // properly wait, or this might not work
+  currentValue = await simpleStorage.getFunction("retrieve")();
+  console.log(`Current value is ${currentValue}`);
 }
 
 // automatically verify contract on etherscan
