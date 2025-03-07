@@ -11,3 +11,10 @@ REPORT_GAS=true npx hardhat test
 npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```
+
+## Commands to run
+
+```
+hardhat run scripts/deploy.ts --network sepolia
+hardhat run scripts/deploy.ts --network hardhat
+```
