@@ -12,6 +12,16 @@ npx hardhat node
 npx hardhat ignition deploy ./ignition/modules/Lock.ts
 ```
 
+or if using `yarn`:
+
+```shell
+yarn hardhat help
+yarn hardhat test
+REPORT_GAS=true yarn hardhat test
+yarn hardhat node
+yarn hardhat ignition deploy ./ignition/modules/Lock.ts
+```
+
 ## Commands to run
 
 ```
@@ -19,7 +29,7 @@ hardhat run scripts/deploy.ts --network sepolia
 hardhat run scripts/deploy.ts --network hardhat
 ```
 
-## Notes
+## Sections
 ### Node
 The following commmand can be used to spawn a `localhost` blockchain server:
 
@@ -55,10 +65,39 @@ We can run it with the following command:
 hardhat coverage
 ```
 
+### typechain
+`typechain` is a plugin for Hardhat that generates TypeScript types for our contracts.
+We can run it with the following command:
+
+```
+hardhat typechain
+```
+
+By default, hardhat also generates types when we compile our code using `hardhat compile`.
+
 ### Tests
 We use Mocha and Chai for testing.
 To run defined tests, we can use the following command:
 
 ```
 hardhat test
+```
+
+## Notes
+This repo also includes a `devenv.nix` file, that are used to setup a development environment
+with [Devenv on Nix](https://devenv.sh/).
+If you are not on NixOS or using Nix, you don't need to install it, it's just a matter of convenience for me!
+You can use your own package manager or whatever software tool you prefer to install: nodejs, yarn, npm, etc...
+
+### Commands to run for quick inital setup for a new project using devenv
+```bash
+mkdir my-project
+cd my-project
+git init
+devenv init
+# Copy the content of devenv.nix to your devenv.nix
+devenv shell
+yarn init
+yarn add hardhat -D
+hardhat init
 ```
