@@ -101,3 +101,7 @@ yarn init
 yarn add hardhat -D
 hardhat init
 ```
+
+Last but not the least, make sure to follow Patrick's repos:
+https://github.com/PatrickAlphaC/hardhat-simple-storage-fcc
+https://github.com/smartcontractkit/full-blockchain-solidity-course-js
