@@ -54,3 +54,11 @@ We can run it with the following command:
 ```
 hardhat coverage
 ```
+
+### Tests
+We use Mocha and Chai for testing.
+To run defined tests, we can use the following command:
+
+```
+hardhat test
+```
