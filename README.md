@@ -43,3 +43,14 @@ hardhat console --network hardhat
 
 However it does not support TypeScript syntax, for now. So be sure to remove your type
 annotation and use pure JavaScript instead. :(
+
+### solidity-coverage
+When we write tests for our contracts, sometimes we might just miss a part that should be tested.
+`solidity-coverage` is a plugin for Hardhat that checks all of our contracts in contracts/ folder
+and generates a report. Which methods are covered, and which are not.
+
+We can run it with the following command:
+
+```
+hardhat coverage
+```

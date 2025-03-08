@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import dotenv from "dotenv";
 import "hardhat-gas-reporter";
+import "solidity-coverage";
 // import our custom tasks
 import "./tasks/block-number";
 
