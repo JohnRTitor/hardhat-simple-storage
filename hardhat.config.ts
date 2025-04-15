@@ -1,10 +1,6 @@
-import { HardhatUserConfig } from "hardhat/config";
-import "@nomicfoundation/hardhat-toolbox";
+import type { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-toolbox-viem";
 import dotenv from "dotenv";
-import "hardhat-gas-reporter";
-import "solidity-coverage";
-import "@typechain/hardhat";
-// import our custom tasks
 import "./tasks/block-number";
 
 dotenv.config();
@@ -41,7 +37,6 @@ const config: HardhatUserConfig = {
     currency: "USD",
     // get a key from https://coinmarketcap.com/api/
     coinmarketcap: COINMARKETCAP_API_KEY,
-    L1Etherscan: ETHERSCAN_API_KEY,
     token: "ETH",
   },
   solidity: "0.8.28",

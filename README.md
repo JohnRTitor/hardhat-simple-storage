@@ -5,11 +5,11 @@ This project demonstrates a basic Hardhat use case. It comes with a sample contr
 Try running some of the following tasks:
 
 ```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
+pnpm hardhat help
+pnpm hardhat test
+REPORT_GAS=true pnpm hardhat test
+pnpm hardhat node
+pnpm hardhat ignition deploy ./ignition/modules/Lock.ts
 ```
 
 or if using `yarn`:
@@ -65,14 +65,6 @@ We can run it with the following command:
 hardhat coverage
 ```
 
-### typechain
-`typechain` is a plugin for Hardhat that generates TypeScript types for our contracts.
-We can run it with the following command:
-
-```
-hardhat typechain
-```
-
 By default, hardhat also generates types when we compile our code using `hardhat compile`.
 
 ### Tests
@@ -98,10 +90,25 @@ devenv init
 # Copy the content of devenv.nix to your devenv.nix
 devenv shell
 yarn init
-yarn add hardhat -D
+yarn add hardhat dotenv prettier solhint -D
 hardhat init
+```
+
+or using pnpm:
+
+```bash
+mkdir my-project
+cd my-project
+git init
+devenv init
+# Copy the content of devenv.nix to your devenv.nix
+devenv shell
+pnpm add hardhat dotenv prettier solhint -D
+pnpm hardhat init
 ```
 
 Last but not the least, make sure to follow Patrick's repos:
 https://github.com/PatrickAlphaC/hardhat-simple-storage-fcc
 https://github.com/smartcontractkit/full-blockchain-solidity-course-js
+
+{::note::} This repo has been migrated to use Hardhat Viem from Ethers.js. You can see the update commit to check what has changed.

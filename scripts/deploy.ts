@@ -1,40 +1,40 @@
 // imports
-import { ethers, run, network } from "hardhat";
-// if you get a typescript warning that typechain-types is not found
-// recompile the code, you likely cleaned your workspace
-import { SimpleStorage, SimpleStorage__factory } from "../typechain-types";
+import hre from "hardhat";
 import "@nomicfoundation/hardhat-verify";
-import { ContractTransactionResponse } from "ethers";
+import SimpleStorageModule from "../ignition/modules/SimpleStorage";
 
 // async main
 async function main(): Promise<void> {
-  const SimpleStorageFactory: SimpleStorage__factory =
-    await ethers.getContractFactory("SimpleStorage");
+  const { SimpleStorage } = await hre.ignition.deploy(SimpleStorageModule);
+  const publicClient = await hre.viem.getPublicClient();
 
-  console.log("Deploying contract...");
-  const simpleStorage: SimpleStorage = await SimpleStorageFactory.deploy();
-  await simpleStorage.waitForDeployment();
-
-  console.log(`Deployed contract to ${await simpleStorage.getAddress()}`);
+  console.log(`SimpleStorage deployed to: ${SimpleStorage.address}`);
 
   // if we are on Sepolia testnet, and we have an ETHERSCAN_API_KEY
-  if (network.config.chainId === 11155111 && process.env.ETHERSCAN_API_KEY!) {
+  if (
+    hre.network.config.chainId === 11155111 &&
+    process.env.ETHERSCAN_API_KEY!
+  ) {
+    /*
     // verifying may take some time, let's wait for 5 blocks
     console.log("Waiting for block confirmation...");
-    await simpleStorage.deploymentTransaction()?.wait(5);
-    await verifyContract(await simpleStorage.getAddress(), []);
+    await publicClient.waitForTransactionReceipt({
+      confirmations: 5,
+      hash: SimpleStorage.address,
+    });
+    */
+    await verifyContract(SimpleStorage.address, []);
   }
 
   // Get the current value
-  let currentValue: bigint = await simpleStorage.getFunction("retrieve")();
+  let currentValue: bigint = await SimpleStorage.read.retrieve();
   console.log(`Current value is ${currentValue}`);
 
   // Get a new value
-  let tx: ContractTransactionResponse = await simpleStorage.getFunction(
-    "store"
-  )("42");
-  await tx.wait(); // properly wait, or this might not work
-  currentValue = await simpleStorage.getFunction("retrieve")();
+  const hash = await SimpleStorage.write.store([BigInt(42)]);
+  await publicClient.waitForTransactionReceipt({ hash });
+
+  currentValue = await SimpleStorage.read.retrieve();
   console.log(`Current value is ${currentValue}`);
 }
 
@@ -47,7 +47,7 @@ async function verifyContract(contractAddress: string, args: string[]) {
   // try catch block to handle errors during verification
   // like the code has already been verified, network error, auth error
   try {
-    await run("verify:verify", {
+    await hre.run("verify:verify", {
       address: contractAddress,
       constructorArguments: args,
     }); // hardhat verify --verify

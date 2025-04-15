@@ -1,7 +1,6 @@
-import { ethers } from "hardhat";
-import { SimpleStorage, SimpleStorage__factory } from "../typechain-types";
-import { expect, assert } from "chai";
-import { Contract, ContractTransactionResponse } from "ethers";
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
+import { assert, expect } from "chai";
+import hre from "hardhat";
 
 // We are using Mocha for testing
 // we could use solidity itself for testing solidity
@@ -13,63 +12,58 @@ import { Contract, ContractTransactionResponse } from "ethers";
 // we can also specifically run a test by appending the only keyword in it()
 // Like it.only()
 
-// describe the test SimpleStorage, such that the function......
 describe("SimpleStorage", function () {
-  let simpleStorageFactory: SimpleStorage__factory;
-  let simpleStorage: SimpleStorage;
+  async function deploySimpleStorageFixture() {
+    const [deployer, otherAccount] = await hre.viem.getWalletClients();
+    const simpleStorage = await hre.viem.deployContract("SimpleStorage");
+    const publicClient = await hre.viem.getPublicClient();
 
-  // beforeEach() is run before each it() block means test
-  beforeEach(async function () {
-    simpleStorageFactory = await ethers.getContractFactory("SimpleStorage");
-    simpleStorage = await simpleStorageFactory.deploy();
-  });
+    return { simpleStorage, deployer, otherAccount, publicClient };
+  }
 
   // it() is used to define a test case
   // in this testcase, we are testing the initial value/favorite number
   // of our contract, which should be 0
   it("Should start with the favorite number of 0", async function () {
-    const currentValue: bigint = await simpleStorage.getFunction("retrieve")();
-    const expectedValue: number = 0;
+    const { simpleStorage } = await loadFixture(deploySimpleStorageFixture);
+    const expectedValue: bigint = 0n;
+    const currentValue = await simpleStorage.read.retrieve();
+
     // we can either use expect or assert
     // expect(currentValue).to.equal(0);
-    assert.equal(currentValue.toString(), expectedValue.toString());
+    assert.equal(currentValue, expectedValue);
   });
 
   // in this test case, we are testing the update functionality of our contract
   // we are testing that the favorite number is updated correctly
   it("Should update when we call store", async function () {
-    const expectedValue = 55;
-    const tx: ContractTransactionResponse = await simpleStorage.getFunction(
-      "store"
-    )(expectedValue);
-    tx.wait(1); // wait properly, else it may fail
-
-    const currentValue: bigint = await simpleStorage.getFunction("retrieve")();
-    assert.equal(currentValue.toString(), expectedValue.toString());
+    const { simpleStorage } = await loadFixture(deploySimpleStorageFixture);
+    const expectedValue = 55n;
+    await simpleStorage.write.store([expectedValue]);
+    const currentValue = await simpleStorage.read.retrieve();
+    assert.equal(currentValue, expectedValue);
   });
 
   it("Should update when we call addPerson", async function () {
+    const { simpleStorage } = await loadFixture(deploySimpleStorageFixture);
     const name: string = "John Doe";
-    const favoriteNumber: number = 42;
+    const favoriteNumber: bigint = 42n;
 
-    let tx: ContractTransactionResponse = await simpleStorage.getFunction(
-      "addPerson"
-    )(name, favoriteNumber.toString());
-    tx.wait(1);
+    await simpleStorage.write.addPerson([name, favoriteNumber]);
 
-    // we can use getFunction to get value of public variables too
+    // we can use read.varName to get the value of public variables too
     // get the favorite number by querying the dictionary
-    const returnedNumber: bigint = await simpleStorage.getFunction(
-      "nameToFavoriteNumber"
-    )(name);
+    const returnedNumberFromDictionary =
+      await simpleStorage.read.nameToFavoriteNumber([name]);
+
     // get the people list's 0th element, it is the person we just added
-    const person: { favoriteNumber: bigint; name: string } =
-      await simpleStorage.getFunction("people")("0");
+    const person: [bigint, string] = await simpleStorage.read.people([0n]);
 
     // testing our nameToFavoriteNumber mapping/dictionary
-    assert.equal(returnedNumber.toString(), favoriteNumber.toString());
-    // testing our people list 0'th element
-    assert.equal(person.name, name);
-    assert.equal(person.favoriteNumber.toString(), favoriteNumber.toString());
+    assert.equal(returnedNumberFromDictionary, favoriteNumber);
+    // testing our people list 0'th element - person which is a list
+    // [favoriteNumber, name]
+    assert.equal(person[1], name);
+    assert.equal(person[0], favoriteNumber);
   });
 });
