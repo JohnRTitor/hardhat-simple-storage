@@ -27,14 +27,17 @@ async function main(): Promise<void> {
   }
 
   // Get the current value
-  let currentValue: bigint = await SimpleStorage.read.retrieve();
+  let currentValue: bigint =
+    await SimpleStorage.read.retrieveGlobalFavoriteNumber();
   console.log(`Current value is ${currentValue}`);
 
   // Get a new value
-  const hash = await SimpleStorage.write.store([BigInt(42)]);
+  const hash = await SimpleStorage.write.storeGlobalFavoriteNumber([
+    BigInt(42),
+  ]);
   await publicClient.waitForTransactionReceipt({ hash });
 
-  currentValue = await SimpleStorage.read.retrieve();
+  currentValue = await SimpleStorage.read.retrieveGlobalFavoriteNumber();
   console.log(`Current value is ${currentValue}`);
 }
 

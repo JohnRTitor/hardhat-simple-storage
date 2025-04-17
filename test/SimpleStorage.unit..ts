@@ -1,6 +1,7 @@
 import { loadFixture } from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
 import { assert, expect } from "chai";
 import hre from "hardhat";
+import { developmentChains } from "../helper-hardhat-config";
 
 // We are using Mocha for testing
 // we could use solidity itself for testing solidity
@@ -8,11 +9,18 @@ import hre from "hardhat";
 // as it's more flexible
 
 // run `hardhat test` to run all tests
-// run `hardhat test --grep store` to run tests with the word "store"
+// run `hardhat test --grep storeGlobalFavoriteNumber` to run tests with the word "storeGlobalFavoriteNumber"
 // we can also specifically run a test by appending the only keyword in it()
 // Like it.only()
 
-describe("SimpleStorage", function () {
+describe("SimpleStorage Unit Tests", function () {
+  before(function () {
+    // we want to run this only on development chains
+    if (!developmentChains.includes(hre.network.name)) {
+      this.skip();
+    }
+  });
+
   async function deploySimpleStorageFixture() {
     const [deployer, otherAccount] = await hre.viem.getWalletClients();
     const simpleStorage = await hre.viem.deployContract("SimpleStorage");
@@ -27,7 +35,8 @@ describe("SimpleStorage", function () {
   it("Should start with the favorite number of 0", async function () {
     const { simpleStorage } = await loadFixture(deploySimpleStorageFixture);
     const expectedValue: bigint = 0n;
-    const currentValue = await simpleStorage.read.retrieve();
+    const currentValue =
+      await simpleStorage.read.retrieveGlobalFavoriteNumber();
 
     // we can either use expect or assert
     // expect(currentValue).to.equal(0);
@@ -36,11 +45,12 @@ describe("SimpleStorage", function () {
 
   // in this test case, we are testing the update functionality of our contract
   // we are testing that the favorite number is updated correctly
-  it("Should update when we call store", async function () {
+  it("Should update when we call storeGlobalFavoriteNumber", async function () {
     const { simpleStorage } = await loadFixture(deploySimpleStorageFixture);
     const expectedValue = 55n;
-    await simpleStorage.write.store([expectedValue]);
-    const currentValue = await simpleStorage.read.retrieve();
+    await simpleStorage.write.storeGlobalFavoriteNumber([expectedValue]);
+    const currentValue =
+      await simpleStorage.read.retrieveGlobalFavoriteNumber();
     assert.equal(currentValue, expectedValue);
   });
 
@@ -57,7 +67,7 @@ describe("SimpleStorage", function () {
       await simpleStorage.read.nameToFavoriteNumber([name]);
 
     // get the people list's 0th element, it is the person we just added
-    const person: [bigint, string] = await simpleStorage.read.people([0n]);
+    const person: [bigint, string] = await simpleStorage.read.personList([0n]);
 
     // testing our nameToFavoriteNumber mapping/dictionary
     assert.equal(returnedNumberFromDictionary, favoriteNumber);
