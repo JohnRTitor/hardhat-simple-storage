@@ -2,6 +2,7 @@
 import hre from "hardhat";
 import "@nomicfoundation/hardhat-verify";
 import SimpleStorageModule from "../ignition/modules/SimpleStorage";
+import { sepolia } from "viem/chains";
 
 // async main
 async function main(): Promise<void> {
@@ -12,7 +13,7 @@ async function main(): Promise<void> {
 
   // if we are on Sepolia testnet, and we have an ETHERSCAN_API_KEY
   if (
-    hre.network.config.chainId === 11155111 &&
+    hre.network.config.chainId === sepolia.id &&
     process.env.ETHERSCAN_API_KEY!
   ) {
     /*
